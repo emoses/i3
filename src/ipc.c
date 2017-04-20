@@ -1013,6 +1013,44 @@ IPC_HANDLER(get_binding_modes) {
     y(free);
 }
 
+IPC_HANDLER(get_bindings) {
+    yajl_gen gen = ygenalloc();
+
+    y(array_open);
+    struct Mode *mode;
+    SLIST_FOREACH(mode, &modes, modes) {
+        y(map_open);
+
+        y("name");
+        ystr(mode->name);
+
+        y("bindings");
+        y(array_open);
+
+        struct Binding *bind;
+        TAILQ_FOREACH(bind, mode->bindings, mode->bindings) {
+            y(map_open);
+
+            y("symbol");
+            ystr(bind->symbol);
+
+            y("command");
+            ystr(bind->command);
+        }
+        y(array_close);
+
+        y(map_close);
+    }
+    y(array_close);
+
+    const unsigned char *payload;
+    ylength length;
+    y(get_buf, &payload, &length);
+
+    ipc_send_message(fd, length, I3_IPC_REPLY_TYPE_BINDINGS, payload);
+    y(free);
+}
+
 /*
  * Callback for the YAJL parser (will be called when a string is parsed).
  *
@@ -1089,7 +1127,7 @@ IPC_HANDLER(subscribe) {
 
 /* The index of each callback function corresponds to the numeric
  * value of the message type (see include/i3/ipc.h) */
-handler_t handlers[9] = {
+handler_t handlers[10] = {
     handle_command,
     handle_get_workspaces,
     handle_subscribe,
@@ -1099,6 +1137,7 @@ handler_t handlers[9] = {
     handle_get_bar_config,
     handle_get_version,
     handle_get_binding_modes,
+    handle_get_bindings,
 };
 
 /*

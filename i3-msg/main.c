@@ -164,11 +164,13 @@ int main(int argc, char *argv[]) {
                 message_type = I3_IPC_MESSAGE_TYPE_GET_BAR_CONFIG;
             else if (strcasecmp(optarg, "get_binding_modes") == 0)
                 message_type = I3_IPC_MESSAGE_TYPE_GET_BINDING_MODES;
+            else if (strcasecmp(optarg, "get_bindings") == 0)
+                message_type = I3_IPC_MESSAGE_TYPE_GET_BINDINGS;
             else if (strcasecmp(optarg, "get_version") == 0)
                 message_type = I3_IPC_MESSAGE_TYPE_GET_VERSION;
             else {
                 printf("Unknown message type\n");
-                printf("Known types: command, get_workspaces, get_outputs, get_tree, get_marks, get_bar_config, get_binding_modes, get_version\n");
+                printf("Known types: command, get_workspaces, get_outputs, get_tree, get_marks, get_bar_config, get_binding_modes, get_bindings, get_version\n");
                 exit(EXIT_FAILURE);
             }
         } else if (o == 'q') {
